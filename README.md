@@ -14,7 +14,7 @@ Modify `-t 8` to use different number of threads than 8.
 
 
 ### Model Lorentzian self-energy
-![Lorentzian](fig_lorentzian.pdf)
+![Lorentzian](fig_lorentzian.png)
 
 ### Frohlich model
-![Frohlich](fig_frohlich.pdf)
+![Frohlich](fig_frohlich.png)

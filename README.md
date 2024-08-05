@@ -2,7 +2,7 @@
 
 ### Installing the dependencies
 ```bash
-julia -e "using Pkg; Pkg.instantiate(); Pkg.precompile()"
+julia -e --project=. "using Pkg; Pkg.instantiate(); Pkg.precompile()"
 ```
 
 ### Running the script

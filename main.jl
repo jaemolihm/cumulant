@@ -125,7 +125,7 @@ begin
         ax.set_ylim([-3, 4])
         ax.axvline(kF, c="r", ls="--", lw=1)
     end
-    fig.savefig("fig_gaussian.pdf"; bbox_inches="tight")
+    fig.savefig("fig_lorentzian.pdf"; bbox_inches="tight")
     display(fig); close(fig)
 end
 

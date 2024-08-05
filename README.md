@@ -9,3 +9,12 @@ julia -e "using Pkg; Pkg.instantiate(); Pkg.precompile()"
 ```bash
 julia -t 8 --project=. main.jl
 ```
+
+Modify `-t 8` to use different number of threads than 8.
+
+
+### Model Lorentzian self-energy
+[Lorentzian](fig_lorentzian.pdf)
+
+### Frohlich model
+[Frohlich](fig_frohlich.pdf)

@@ -1,0 +1,184 @@
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+% \usepackage{oubraces}
+\usepackage{bm,bbm,mathbbol}
+% \usepackage{braket}
+\usepackage{mathtools}
+\usepackage{amsmath,amssymb,amsfonts}
+% \usepackage{bbold}
+% \usepackage{esvect}
+\usepackage[dvipsnames]{xcolor}
+% \usepackage{epsfig}
+% \usepackage{array}
+\usepackage{multirow}
+\usepackage{graphicx}
+% \usepackage[normalem]{ulem}
+% \usepackage{float}
+\usepackage[section]{placeins}
+% \usepackage{afterpage}
+% \usepackage{xifthen}
+% \usepackage{tikz}
+
+
+% % SP
+% \usepackage{siunitx}
+% \usepackage[caption=false]{subfig}
+% \usepackage{multirow}
+% \usepackage{placeins}
+% \usepackage{cancel}
+% \usepackage{spreadtab}
+
+% Revision commands
+% Usage: Define color-coded commands in main.tex, e.g.
+% \newcommand{\jml}[1]{{\MYadd{Magenta}{#1}}}
+% \newcommand{\jmlc}[1]{{\MYcomment{Magenta}{JML}{#1}}}
+% \newcommand{\jmlx}[1]{{\MYsout{Magenta}{#1}}}
+% \newcommand{\jmlxx}[1]{{\MYcancel{Magenta}{#1}}}
+% Then, put "\def\ShowRevision{0}" in main.tex before \usepackage{jmlstyle} to reveal colored commands
+% Comment the line "\def\ShowRevision{0}" to hide revision and show only the final version.
+\ifx\ShowRevision\undefined
+    % Do not show revision
+    \newcommand{\MYadd}[2]{#2}
+    \newcommand{\MYsout}[2]{}
+    \newcommand{\MYcancel}[2]{}
+    \newcommand{\MYcomment}[3]{}
+\else
+    % Show revision
+    \newcommand{\MYadd}[2]{\color{#1}{#2}}  % revision
+    \newcommand{\MYsout}[2]{\color{#1}{\sout{#2}}}  % strike-out
+    \newcommand{\MYcancel}[2]{\color{#1}{\cancel{#2}}}  % strike-out in equations
+    \newcommand{\MYcomment}[3]{\color{#1}{[\small \textbf{{#2}:} \textit{#3}]}}  % comment
+\fi
+
+% alias
+\newcommand{\mb}[1]{{\bm{\mathrm{#1}}}}  % bold roman
+% \newcommand{\mb}[1]{{\boldsymbol{#1}}}  % bold italic
+\newcommand{\mc}[1]{{\mathcal{#1}}}
+\newcommand{\colr}[1]{{\color{red}{#1}}}
+\newcommand{\colb}[1]{{\color{blue}{#1}}}
+\newcommand{\nnnl}{\nonumber \\}
+\newcommand{\veps}[0]{\varepsilon}
+\newcommand{\dd}[0]{{\mathrm{d}}}
+
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+
+% Operators
+\newcommand{\one}[0]{\mathbbm{1}}
+% \newcommand{\opd}{d}
+% \newcommand{\opdd}{d^\dagger}
+% \newcommand{\opq}{q}
+% \newcommand{\opqd}{q^\dagger}
+% \newcommand{\opc}[0]{c}
+% \newcommand{\opcd}[0]{c^\dagger}
+% \newcommand{\opH}[0]{H}
+% \newcommand{\psid}{\psi^\dagger}
+
+% % Mathcal
+\newcommand{\mcC}[0]{{\mathcal{C}}}
+\newcommand{\mcG}[0]{{\mathcal{G}}}
+\newcommand{\mcF}[0]{{\mathcal{F}}}
+\newcommand{\mcK}[0]{{\mathcal{K}}}
+\newcommand{\mcS}[0]{{\mathcal{S}}}
+\newcommand{\mcO}[0]{{\mathcal{O}}}
+\newcommand{\mcT}[0]{{\mathcal{T}}}
+\newcommand{\mcR}[0]{{\mathcal{R}}}
+\newcommand{\mcP}[0]{{\mathcal{P}}}
+
+% % Misc
+% \newcommand{\llrr}[1]{{\langle\!\langle {#1} \rangle\!\rangle}}
+% \newcommand{\ovl}[1]{{\overline{#1}}}
+% \newcommand{\ccdots}{{{\cdot}{\cdot}{\cdot}}} % more compact cdots
+% \newcommand{\stkout}[1]{\ifmmode\text{\sout{\ensuremath{#1}}}\else\sout{#1}\fi}
+
+% shorthands for references
+\newcommand{\Eq}[1]{Eq.~\eqref{#1}}
+\newcommand{\Eqs}[1]{Eqs.~\eqref{#1}}
+\newcommand{\Equ}[1]{Equation~\eqref{#1}}
+\newcommand{\Equs}[1]{Equations~\eqref{#1}}
+\newcommand{\Sec}[1]{Sec.~\ref{#1}}
+\newcommand{\App}[1]{Appendix~\ref{#1}}
+\newcommand{\Fig}[1]{Fig.~\ref{#1}}
+\newcommand{\Figs}[1]{Figs.~\ref{#1}}
+
+% Bloch states
+\newcommand{\bk}[0]{{\mb{k}}}
+\newcommand{\bq}[0]{{\mb{q}}}
+\newcommand{\bG}[0]{{\mb{G}}}
+\newcommand{\bkq}[0]{{\mb{k}+\mb{q}}}
+\newcommand{\nk}[0]{{n\mb{k}}}
+\newcommand{\npk}[0]{{n'\mb{k}}}
+\newcommand{\mk}[0]{{m\mb{k}}}
+\newcommand{\mkq}[0]{{m\mb{k+q}}}
+\newcommand{\mkmq}[0]{{m\mb{k-q}}}
+\newcommand{\qnu}[0]{{\mb{q}\nu}}
+\newcommand{\qmu}[0]{{\mb{q}\mu}}
+\newcommand{\ik}[0]{{i\mb{k}}}
+\newcommand{\iR}[0]{{i\mb{R}}}
+\newcommand{\jR}[0]{{j\mb{R}}}
+\newcommand{\iz}[0]{{i\mb{0}}}
+\newcommand{\jk}[0]{{j\mb{k}}}
+\newcommand{\jz}[0]{{j\mb{0}}}
+
+% \newcommand{\hatqb}[0]{{\hat{\mb{q}}}}
+% \newcommand{\hatq}[0]{{\hat{q}}}
+% \newcommand{\ka}[0]{{\kappa\alpha}}
+% \newcommand{\kb}[0]{{\kappa\beta}}
+% \newcommand{\kpa}[0]{{\kappa'\alpha}}
+% \newcommand{\kpb}[0]{{\kappa'\beta}}
+
+\newcommand{\nint}{\!\int\!} % narrow integral without boundaries
+\newcommand{\nbint}[2]{\!\int_{#1}^{#2}\!\!} % narrow integral with boundaries
+\newcommand{\nsint}[1]{\!\int_{#1}\!\!} % narrow integral with subscript
+
+% \newcommand{\intdq}{{ \nint \frac{d\mb{q}}{\Omega^{\rm BZ}} }}
+
+% Codes
+\newcommand{\QE}[0]{{\textsc{Quantum ESPRESSO}}}
+
+% Braket notation
+\DeclarePairedDelimiter\bra{\langle}{\rvert}
+\DeclarePairedDelimiter\ket{\lvert}{\rangle}
+\DeclarePairedDelimiterX\braket[2]{\langle}{\rangle}{#1\,\delimsize\vert\,\mathopen{}#2}
+\DeclarePairedDelimiterX\mel[3]{\langle}{\rangle}{#1 
+\delimsize\vert\mathopen{} #2 \delimsize\vert\mathopen{} #3}
+\DeclarePairedDelimiterX\abs[1]{\lvert}{\rvert}{#1}
+\DeclarePairedDelimiterX\expval[1]{\langle}{\rangle}{#1}
+
+
+
+% ==================================================================
+\newcommand{\jml}[1]{{\MYadd{Magenta}{#1}}}
+\newcommand{\jmlc}[1]{{\MYcomment{Magenta}{JML}{#1}}}
+\newcommand{\jmlx}[1]{{\MYsout{Magenta}{#1}}}
+\newcommand{\jmlxx}[1]{{\MYcancel{Magenta}{#1}}}
+
+\newcommand{\todo}[1]{{ \MYcomment{red}{TODO}{#1} }}
+
+\newcommand{\wt}[1]{{\widetilde{#1}}}
+\newcommand{\Tr}[0]{{\mathrm{Tr}\,}}
+\newcommand{\ka}[0]{{\kappa\alpha}}
+\newcommand{\kpap}[0]{{\kappa'\alpha'}}
+\newcommand{\qka}[0]{{\mb{q}\kappa\alpha}}
+\newcommand{\qkpap}[0]{{\mb{q}\kappa'\alpha'}}
+\newcommand{\kb}[0]{{\kappa\beta}}
+\newcommand{\kpb}[0]{{\kappa'\beta}}
+\newcommand{\qkb}[0]{{\mb{q}\kappa\beta}}
+\newcommand{\qkpb}[0]{{\mb{q}\kappa'\beta}}
+
+\newcommand{\mnk}[0]{{mn\mb{k}}}
+\newcommand{\mpkq}[0]{{m'\mb{k+q}}}
+\newcommand{\sk}[0]{{s\mb{k}}}
+\newcommand{\rkq}[0]{{r\mb{k+q}}}
+
+\newcommand{\Dq}[0]{\Delta_\qnu}
+\newcommand{\Dmq}[0]{\Delta_{-\qnu}}
+\newcommand{\DqV}[0]{\Delta_\qnu\!V}
+\newcommand{\DmqV}[0]{\Delta_{-\qnu}\!V}
+\newcommand{\npkmp}[0]{{n'\mb{k}-\mb{p}}}
+\newcommand{\npkpqmp}[0]{{n'\mb{k}+\mb{q}-\mb{p}}}
+\newcommand{\nppkpqmp}[0]{{n''\mb{k}+\mb{q}-\mb{p}}}
+\newcommand{\mpkpqmp}[0]{{m'\mb{k}+\mb{q}-\mb{p}}}
+\newcommand{\ak}[0]{{a\mb{k}}}
+\newcommand{\jkq}[0]{{j\mb{k}+\mb{q}}}
+\newcommand{\jkmq}[0]{{j\mb{k}-\mb{q}}}
+\newcommand{\GGp}[0]{{\mb{G}\mb{G}'}}

@@ -1,0 +1,173 @@
+\documentclass[
+    reprint, onecolumn,
+    aps,prx,11pt,tightenlines,amsmath,amssymb,
+    longbibliography,superscriptaddress,citeautoscript,
+    preprintnumbers,nofootinbib]{revtex4-2}
+
+
+% Uncomment this to hide the revision and have a black-and-white version
+\def\ShowRevision{0}
+
+\usepackage{jmlstyle}
+\usepackage{enumitem}
+\usepackage{orcidlink}
+% \usepackage[inline]{showlabels}
+
+\usepackage{cancel}
+
+
+% ===============================================
+
+
+\begin{document}
+
+
+\title{Implementation of the cumulant approximation}
+
+\author{Jae-Mo Lihm}
+\email{jaemo.lihm@gmail.com}
+% \affiliation{
+% European Theoretical Spectroscopy Facility, Institute of Condensed Matter and Nanosciences, Universit\'e catholique de Louvain, Chemin des \'Etoiles 8, B-1348 Louvain-la-Neuve, Belgium. 	
+% }
+
+\date{\today}
+
+% \begin{abstract}
+% \end{abstract}
+
+
+\maketitle
+In this note, I discuss the details on the implementation of the cumulant approximation.
+%
+The implementation in Julia is available in \url{https://github.com/jaemolihm/cumulant}.
+
+
+We suppose the following quantities are already given:
+(i) $\veps$, the bare eigenvalue plus the static self-energy, and
+(ii) $\Sigma(\omega)$, the retarded self-energy minus the static part, satisfying the Kramers--Kronig relation
+\begin{equation} \label{eq:KK}
+    \Re \Sigma(\omega) = \frac{1}{\pi} \mc{P} \nbint{-\infty}{\infty} \dd\omega' \, \frac{\Im \Sigma(\omega')}{\omega' - \omega} \,.
+\end{equation}
+
+
+
+Let us first consider the retarded cumulant.
+%
+The Landau form of the cumulant function reads~\cite{Loos2024Cumulant}
+\begin{equation} \label{eq:C_R_t}
+    C^{\rm R}(t) = \nbint{-\infty}{\infty} \dd\omega \, \beta(\omega + \veps) \frac{e^{-i\omega t} - 1 + i\omega t}{\omega^2} \,,
+\end{equation}
+where
+\begin{equation} \label{eq:beta_def}
+    \beta(\omega) = - \frac{1}{\pi} \Im \Sigma(\omega) \,.
+\end{equation}
+%
+The retarded cumulant Green function reads
+\begin{equation} \label{eq:G_R_cum}
+    G^{\rm R,\,cum}(\omega)
+    = -i \nbint{-\infty}{\infty} \dd t\, \Theta(t) e^{i(\omega - \veps) t} e^{C^{\rm R}(t)}.
+\end{equation}
+%
+Ideally, $C^{\rm R}(t)$ should be calculated using \Eq{eq:C_R_t} on a dense, wide grid of time points.
+%
+However, such a calculation could be time consuming.
+%
+To reduce computational cost, we utilize the fact that in the limit of large $t$,
+\begin{equation} \label{eq:C_R_limit}
+    \lim_{t \to \infty} C^{\rm R}(t) = -i \Sigma(\veps) t + \left. \frac{\dd \Sigma(\omega)}{\dd \omega} \right|_{\omega = \veps}
+\end{equation}
+holds.
+(See App.~\ref{app:proof} for the proof.)
+%
+We explicitly evaluate the integral \Eq{eq:C_R_t} only for short times, and use the asymptotic form \Eq{eq:C_R_limit} to extrapolate the cumulant function to long times.
+%
+The workflow for the calculation is as follows (see function \texttt{run\_cumulant\_retarded}).
+\begin{enumerate}[topsep=0pt,itemsep=-1ex]
+    \item Calculate $C^{\rm R}(t)$ on a (relatively) coarse, short time grid using \Eq{eq:C_R_t}. (We use the analytic form of $\Sigma$ if known; otherwise we use linear interpolation.)
+    \item Subtract the linear asymptotic form \Eq{eq:C_R_limit}
+    \item Linearly interpolate the remainder to a denser, long time grid (fill zeros beyond the short time grid)
+    \item Add back the linear asymptotic form \Eq{eq:C_R_limit} on the dense grid.
+    \item Evaluate the Green's function with \Eq{eq:G_R_cum}, using the dense grid cumulant function and fast Fourier transformation.
+\end{enumerate}
+
+Note that it is important to evaluate the exponential in the time domain and then Fourier transform to frequencies.
+%
+We find that evaluating \Eq{eq:G_R_cum} via a repeated convolution with $C^{\rm R}$ may lead to numerical problems and is hard to converge.
+%
+A possible cause is that $C^{\rm R}(t)$ in the long-time limit is linearly divergent.
+%
+Instead, the exponential form $e^{C^{\rm R}(t)}$ exponentially decays to zero if $\Im \Sigma(\veps) \neq 0$, and in the worst case becomes a finite oscillatory function.
+%
+Thus, its Fourier transformation yields well-behaved results.
+
+
+\medskip
+The time-ordered cumulant satisfies
+\begin{equation}
+    C^{\rm \pm}(t) = \nbint{-\infty}{\infty} d\omega \beta^\pm(\omega + \veps) \frac{e^{-i\omega t} - 1 + i\omega t}{\omega^2} \,,
+\end{equation}
+where
+\begin{equation}
+    \beta^\pm(\omega) = \beta(\omega)\Theta[\pm(\mu - \omega)] \,.
+\end{equation}
+Thus, the time-ordered cumulant function can be computed similarly by replacing $\beta$ with $\beta^\pm$, and recomputing the corresponding real part using the Kramers--Kronig relation.
+
+% https://journals.aps.org/prl/pdf/10.1103/PhysRevLett.77.2268
+% https://journals.aps.org/prb/pdf/10.1103/PhysRevB.90.085112
+% https://journals.aps.org/prb/pdf/10.1103/PhysRevB.97.035137
+
+
+\appendix
+\section{Proof of the asymptotic limit [\Eq{eq:C_R_limit}]} \label{app:proof}
+Using
+\begin{align}
+    \lim_{t \to \infty} \frac{e^{-i\omega t} - 1}{\omega}
+    = -i \lim_{t \to \infty} \nbint{0}{t} e^{-i\omega t'} \dd t'
+    &= -i \lim_{t \to \infty} \lim_{\eta \to 0^+} \nbint{0}{t} e^{-i\omega t'} e^{-\eta t'} \dd t'
+    \nnnl
+    &= -i \lim_{\eta \to 0^+} \nbint{0}{\infty} e^{-i(\omega - i\eta) t'} \dd t'
+    \nnnl
+    &= - \lim_{\eta \to 0^+} \frac{1}{\omega - i\eta}
+    \nnnl
+    &= -\mc{P} \frac{1}{\omega} - i\pi\delta(\omega) \,,
+\end{align}
+we find
+\begin{equation}
+    \lim_{t \to \infty} \nbint{-\infty}{\infty} \dd\omega \, \beta(\omega + \veps) \frac{e^{-i\omega t} - 1}{\omega}
+    = -\mc{P} \nbint{-\infty}{\infty} \dd\omega \, \frac{\beta(\omega + \veps)}{\omega}
+    -i \pi \beta(\veps)
+    = \Sigma(\veps) \,.
+\end{equation}
+The principal value term gives the real part of the self-energy via the Kramers--Kronig relation [\Eq{eq:KK}], and the delta function term gives the imaginary part.
+
+
+Then, for the cumulant function, we first subtract the linear part and take the long-time limit to find
+\begin{align}
+    \lim_{t \to \infty} \bigl[ C^{\rm R}(t) + i \Sigma(\veps) t \bigr]
+    &= \nbint{-\infty}{\infty} \dd\omega \, \beta(\omega + \veps) 
+    \Bigl[ \frac{e^{-i\omega t} - 1 + i\omega t}{\omega^2} 
+    + it \frac{e^{-i\omega t} - 1}{\omega}
+    \Bigr]
+    \nnnl
+    &= \nbint{-\infty}{\infty} \dd\omega \, \beta(\omega + \veps) 
+    \frac{(1 + i \omega t) e^{-i\omega t} - 1}{\omega^2}
+    \nnnl
+    &= - \nbint{-\infty}{\infty} \dd\omega \, \beta(\omega + \veps) 
+    \frac{\dd}{\dd\omega} \Bigl( \frac{e^{-i\omega t} - 1}{\omega} \Bigr) \,.
+\end{align}
+Integrating by parts, we find
+\begin{align}
+    \lim_{t \to \infty} \bigl[ C^{\rm R}(t) + i \Sigma(\veps) t \bigr]
+    &= \nbint{-\infty}{\infty} \dd\omega \, \frac{\dd \beta(\omega + \veps)}{\dd \omega}
+    \frac{e^{-i\omega t} - 1}{\omega}
+    \nnnl
+    &= \frac{\dd}{\dd \veps} \nbint{-\infty}{\infty} \dd\omega \, \beta(\omega + \veps)
+    \frac{e^{-i\omega t} - 1}{\omega}
+    = \frac{\dd \Sigma(\omega) }{\dd \omega} \biggr|_{\omega = \veps} \,.
+\end{align}
+This concludes the proof of \Eq{eq:C_R_limit}.
+
+\FloatBarrier  % Force bibliography to appear after all figures
+\bibliography{main}
+
+\end{document}

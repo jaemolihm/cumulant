@@ -1,5 +1,8 @@
 # Cumulant
 
+### Theory
+For the formal background of the implementation, please take a look at the [note (pdf)](note/main.pdf)
+
 ### Installing the dependencies
 ```bash
 julia -e --project=. "using Pkg; Pkg.instantiate(); Pkg.precompile()"
